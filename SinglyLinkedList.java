@@ -1,4 +1,5 @@
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class SinglyLinkedList<E extends Comparable<E>> {
     private Node<E> head = null;
@@ -100,8 +101,61 @@ public class SinglyLinkedList<E extends Comparable<E>> {
     }
 
     // write your codes here
-    public void swap(){
+    public void swap() {
+        // check if it's empty or only 1 item, nothing to swap
+        if (isEmpty() || size() == 1) { 
+            return; 
+        }
         
+        ArrayList<Node<E>> original = new ArrayList<>(); 
+        Node<E> currNode = head; 
+
+        while (currNode != null) { 
+            original.add(currNode); 
+            currNode = currNode.getNext(); 
+        }
+        
+        // clone it so we can sort it
+        ArrayList<Node<E>> sorted = new ArrayList<>(original); 
+        
+        sorted.sort((a, b) -> a.getElement().compareTo(b.getElement()));
+        // for(int i = 0; i < sorted.size(); i++) {
+        //     System.out.println("Sorted element: " + sorted.get(i).getElement());
+        // }
+        
+        HashMap<Node<E>, Node<E>> swapMap = new HashMap<>(); 
+        int totalElements = sorted.size(); 
+        
+        // map the first half to the last half and vice versa
+        for (int i = 0; i < totalElements; i++) { 
+            Node<E> keyNode = sorted.get(i);
+            Node<E> valueNode = sorted.get(totalElements - 1 - i);
+            swapMap.put(keyNode, valueNode); 
+        }
+        
+        // System.out.println("map size: " + swapMap.size());
+        
+        // fix  head pointer first
+        head = swapMap.get(original.get(0)); 
+        currNode = head; 
+        
+        // stitch the rest of the nodes back tgt using the map
+        for (int j = 1; j < original.size(); j++) { 
+            Node<E> nextNode = swapMap.get(original.get(j)); 
+            currNode.setNext(nextNode); 
+            currNode = nextNode; // move pointer forward
+        }
+        
+        // clear the last next pointer else it loops forever
+        currNode.setNext(null); 
+        tail = currNode; 
+        
+        // Node<E> temp = head;
+        // while(temp != null) {
+        //     System.out.print(temp.getElement() + " -> ");
+        //     temp = temp.getNext();
+        // }
+        // System.out.println("null");
 
     }
    
